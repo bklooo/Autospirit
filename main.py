@@ -196,15 +196,19 @@ def key_input(str=''):
 if __name__ == "__main__":
     p = []
     while(1):
+        # 按住ctrl并按F1记录当前鼠标坐标
         if win32api.GetAsyncKeyState(win32con.VK_CONTROL and win32con.VK_F1):
             p.append(get_mouse_point())
             time.sleep(1)
             print(p)
+        # 按住ctrl并按F2清除所有坐标
         if win32api.GetAsyncKeyState(win32con.VK_CONTROL and win32con.VK_F2):
             p.clear
             print(p)
+        # 按住ctrl并按F3开始运行脚本
         if win32api.GetAsyncKeyState(win32con.VK_CONTROL and win32con.VK_F3):
             while(1):
+                # 判断是否按下esc，为真则跳出循环，为假则执行脚本
                 if win32api.GetAsyncKeyState(win32con.VK_ESCAPE):
                         break
                 for i in p:
