@@ -3,6 +3,7 @@
 import win32api
 import win32con
 import win32gui
+import threading
 from ctypes import *
 import time
 VK_CODE = {
@@ -157,13 +158,13 @@ VK_CODE = {
 class POINT(Structure):
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 
-
+# 获取鼠标坐标
 def get_mouse_point():
     po = POINT()
     windll.user32.GetCursorPos(byref(po))
     return int(po.x), int(po.y)
 
-
+# 鼠标单击
 def mouse_click(x=None, y=None):
     if not x is None and not y is None:
         mouse_move(x, y)
@@ -171,7 +172,7 @@ def mouse_click(x=None, y=None):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
 
-
+# 鼠标双击
 def mouse_dclick(x=None, y=None):
     if not x is None and not y is None:
         mouse_move(x, y)
@@ -181,17 +182,19 @@ def mouse_dclick(x=None, y=None):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
 
-
+# 鼠标移动
 def mouse_move(x, y):
     windll.user32.SetCursorPos(x, y)
 
-
+# 键盘输入
 def key_input(str=''):
     for c in str:
         win32api.keybd_event(VK_CODE[c], 0, 0, 0)
         win32api.keybd_event(VK_CODE[c], 0, win32con.KEYEVENTF_KEYUP, 0)
         time.sleep(0.01)
-
+def p_clean():
+    p.clear()
+    print(p)
 
 if __name__ == "__main__":
     p = []
@@ -203,8 +206,9 @@ if __name__ == "__main__":
             print(p)
         # 按住ctrl并按F2清除所有坐标
         if win32api.GetAsyncKeyState(win32con.VK_CONTROL and win32con.VK_F2):
-            p.clear
-            print(p)
+            p_clean_th = threading.Thread(target=p_clean)
+            p_clean_th.start()
+            time.sleep(1)
         # 按住ctrl并按F3开始运行脚本
         if win32api.GetAsyncKeyState(win32con.VK_CONTROL and win32con.VK_F3):
             while(1):
